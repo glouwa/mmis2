@@ -1,0 +1,29 @@
+.top
+{
+  background-color: yellow;
+  width: 100%;
+  height: 10%;
+}
+
+.right
+{
+  background-color: pink;
+  width: 70%;
+  height: 85%;
+  float: right;
+}
+
+.left
+{
+  background-color: violet;
+  width: 30%;
+  height: 85%;
+}
+
+.main_title
+{
+    height: 5%;
+    text-align: center;
+    font-size: 3em;
+    font-weight: normal;
+}
