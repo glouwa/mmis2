@@ -8,7 +8,7 @@
 
 .right
 {
-  background-color: pink;
+  /*background-color: pink;*/
   width: 70%;
   height: 85%;
   float: right;
@@ -19,6 +19,8 @@
   background-color: violet;
   width: 30%;
   height: 85%;
+  overflow-y: scroll;
+  word-wrap: break-word;
 }
 
 .main_title
@@ -42,4 +44,10 @@
     width: 98%;
     font-size: larger;
     margin: 1%;
+}
+
+.visContainer
+{
+    height: calc(100% - 4em);
+    margin: 2em;
 }
