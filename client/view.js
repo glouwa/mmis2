@@ -28,8 +28,8 @@ var drawTagCloud = function(model)
         var tag = document.createElement('span')
             tag.innerHTML = tagName
             tag.style.fontSize = 0.01 + (2 * tagWeight) + 'em'
-        $('div.left')[0].appendChild(tag); // native html
-        //$('div.left').append(tag);    // jquery
+
+        $('div.left')[0].appendChild(tag)
     }
 }
 
@@ -37,66 +37,45 @@ var drawGraph = function(graphType, model)
 {
     $('div.right').empty()
     if (graphType === '2dplot') $('div.right')[0].appendChild(createVis2dGraph(model));
-    if (graphType === 'bar')    $('div.right')[0].appendChild(createVis2dGraph());
-    if (graphType === '3dplot') $('div.right')[0].appendChild(createVis2dGraph());
-    if (graphType === 'map')    $('div.right')[0].appendChild(createVis2dGraph());
+    //todo if (graphType === 'bar')    $('div.right')[0].appendChild(createVis2dGraph());
+    //if (graphType === '3dplot') $('div.right')[0].appendChild(createVis2dGraph());
+    //if (graphType === 'map')    $('div.right')[0].appendChild(createVis2dGraph());
 }
 
 var createVis2dGraph = function(model)
 {
     var items = [];
     var groups = new vis.DataSet();
-    // var groups = new vis.DataSet();
-
-    //     groups.add({
-    //     id: 0,
-    //     content: names[0],
-    //     options: {
-    //         drawPoints: {
-    //             style: 'square' // square, circle
-    //         }
-    //     }});
-    //
-    // groups.add({
-    //     id: 1,
-    //     content: names[1],
-    //     options: {
-    //         drawPoints: {
-    //             style: 'square' // square, circle
-    //         }
-    //     }});
+    console.log(model)
+    // ∀ coutry ∊ model:
+    //     ∀ year ∊ country:
+    //         ∀ value ∊ year:
+    //             group=country, x=year, y=value
 
     var count = 0
     for (country in model)
     {
-        if (count++ < 4)
+        if (count++ < 16)
         {
             groups.add({
                 id: country,
                 content: country,
                 options: { drawPoints: { style: 'square' } }
             })
-            for (x in model[country]){
-                var y = Number(model[country][x])
-                if (!isNaN(y))
-                    items.push({x:Number(x), y:y, group: country})
+
+            for (year in model[country]){
+                //var value = Number(model[country][year])
+                if (model[country][year] != "")
+                {
+                    var value = Number(model[country][year])
+                    if (!isNaN(value))
+                    {
+                        items.push({ x:year, y:value, group:country })
+                    }
+                }
             }
-            console.log(items[items.length-1])
         }
     }
-
-
-  // var items = [
-  //   {x: '2014-06-13', y: 60, group: 1},
-  //   {x: '2014-06-14', y: 40, group: 1},
-  //   {x: '2014-06-15', y: 55, group: 1},
-  //   {x: '2014-06-16', y: 40, group: 1},
-  //   {x: '2014-06-17', y: 50, group: 1},
-  //   {x: '2014-06-13', y: 30, group: 1},
-  //   {x: '2014-06-14', y: 10, group: 0},
-  //   {x: '2014-06-15', y: 15, group: 0},
-  //   {x: '2014-06-16', y: 30, group: 0}
-  // ];
 
   var dataset = new vis.DataSet(items);
   var options = {
@@ -108,7 +87,7 @@ var createVis2dGraph = function(model)
   };
 
   var container = document.createElement('div');
-  container.className = 'visContainer'
+      container.className = 'visContainer'
   var graph2d = new vis.Graph2d(container, dataset, groups, options);
   return container;
 }
