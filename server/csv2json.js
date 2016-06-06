@@ -3,7 +3,8 @@ var csv = require('fast-csv')
 
 var result = {}
 
-var feature = 'Exports (p of GDP)'
+//var feature = 'Exports (p of GDP)'
+var feature = 'Agriculture (p of GDP)'
 var stream = fs.createReadStream('../data/' + feature + '.csv')
 csv .fromStream(stream, { headers:true })
     .on("data", data => processsCsvLine(data))

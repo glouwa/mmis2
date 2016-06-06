@@ -18,8 +18,18 @@
 {
   width: 30%;
   height: 85%;
+}
+
+.tagCloud
+{
+  width: 100%;
+  height: 67%;
   overflow-y: scroll;
   word-wrap: break-word;
+}
+
+.histogram{
+        height: 30%;
 }
 
 .main_title
