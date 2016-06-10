@@ -1,35 +1,49 @@
 var fs = require('fs')
 var csv = require('fast-csv')
 
-var result = {}
-
-//var feature = 'Exports (p of GDP)'
-var feature = 'Agriculture (p of GDP)'
-var stream = fs.createReadStream('../data/' + feature + '.csv')
-csv .fromStream(stream, { headers:true })
-    .on("data", data => processsCsvLine(data))
-    .on("end", () => saveToFile())
-
-var processsCsvLine = function(data)
-{
-    for(var name in data)
-
-
-    var country = undefined
-    for(var name in data)
-    {
-        var asNumber = Number(name)
-        data[name] = data[name].replace(',', '.')
-        if (isNaN(asNumber)) {
-            country = data[name]
-            delete data[name]
+function getFiles (dir, files_){
+    files_ = files_ || [];
+    var files = fs.readdirSync(dir);
+    for (var i in files){
+        var name = dir + '/' + files[i];
+        var nameOhneExt = files[i].substr(0, files[i].lastIndexOf('.'))
+        if (fs.statSync(name).isDirectory()){
+            getFiles(name, files_);
+        } else {
+            files_.push(nameOhneExt);
         }
     }
-    //console.log({ [country]:data })
-    result[country] = data
+    return files_;
 }
 
-var saveToFile = function()
+var convertFile = function(filenameOhneExt)
 {
-    fs.writeFileSync('../data/' + feature + '.json', JSON.stringify(result, null, 2))
+    console.log('converting ' + filenameOhneExt)
+    var stream = fs.createReadStream('../data/csv/' + filenameOhneExt + '.csv');
+    var result = {}
+    csv .fromStream(stream, { headers:true })
+        .on("error", e => console.log(e))
+        .on("end", () => fs.writeFileSync('../data/' + filenameOhneExt + '.json', JSON.stringify(result, null, 2)))
+        .on("data", data =>
+        {
+            for(var name in data)
+                data[name] = data[name].replace(',', '.')
+
+            var country = undefined
+            for(var name in data)
+            {
+                var asNumber = Number(name)
+                if (isNaN(asNumber)) {
+                    country = data[name]
+                    delete data[name]
+                }
+            }
+            //console.log({ [country]:data })
+            result[country] = data
+        })
 }
+
+var filesOhneExt = getFiles('../data/csv/')
+console.log(filesOhneExt)
+for (var i = 0; i < filesOhneExt.length; i++)
+    convertFile(filesOhneExt[i])

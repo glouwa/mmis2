@@ -1,67 +1,130 @@
-/*
 var viewModel = {
-    data: {} // viewModel.data[feature][country][year] e ℝ
-    keys: {
-        features:  {'gdp':'is Da', ...} {k:v, k:v} [v,v,v,]
-        countries: {'austria', ...} counrtys aus ALLEN files
-        years:     { 1907, } years aus ALLEN files
-    },
-
-    selection: {
-        features: {'gsp'}
-        countries: {'austria'}
-        years:    { 1970-1990 } macht es an unterschied wenn nur eins?
-    }
-}
-*/
-
-var viewModel = {
-    data: {},
-    keys: {
-        countries: {},
-        features:  {},
-        years:     {}
+    data: {},          // viewModel.data[feature][country][year] e ℝ
+    keys: {            // union aus ALLEN files
+        features:      {},
+        countries:     {},
+        years:         {},
     },
     selection: {
-        features:  {},
-        countries: {},
-        years:     {}
-    }
+        features:  { 'Arms imports':true, 'Arms exports':true },
+        countries: { 'United States':true, 'China':true, 'Saudi Arabia':true },
+        years:     undefined
+    },
+    density: {
+        features:  { 'Arms imports':0.8, 'Arms exports':0.6 },
+        countries: { 'Austria':0.7 },
+        years:     { '1970':0.3 },
+    },
+    currentGraph: undefined,
 }
 
-var vis = {}
+var updateView = function()
+{
+    console.log('updateView')
+    updateMeta()
+    $('div.left .tagCloud')    .children().each((index, value)=> value.update())
+    $('div.left .featureCloud').children().each((index, value)=> value.update())
+    $('#fSel').text("∀ featureKey ∊ "+ toString(viewModel.selection.features))
+    $('#cSel').text("∀ countryKey ∊ "+ toString(viewModel.selection.countries))
+    $('#ySel').text("∀ yearKey ∊ *")
+    $('#keysInfo').text(len(viewModel.keys.features) + '⨯' + len(viewModel.keys.countries) + '⨯' +  len(viewModel.keys.years))
 
-var features = ["Exports (p of GDP)", "Agriculture (p of GDP)"]
-var featureId = features[1]
+    viewModel.currentGraph.update()
+}
+
+var updateMeta = function()
+{
+    var dim1 = viewModel.selection.features  || viewModel.keys.features
+    var dim2 = viewModel.selection.countries || viewModel.keys.countries
+    var dim3 = viewModel.selection.years     || viewModel.keys.years
+
+    viewModel.density = {
+        features:{},
+        countries:{},
+        years:{}
+    }
+
+    var l1 = 0, l2 = 0, l3 = 0
+    var e1 = 0, e2 = 0, e3 = 0
+    var i = 0, e = 0
+    for (var featureKey in viewModel.keys.features) if (viewModel.data[featureKey]) {
+        l1++
+        for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
+            l2++
+            for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
+                l3++
+                i++
+            }
+            else { e3++; e++ }
+        }
+        else e2++
+
+        viewModel.density.features[featureKey] = i/(i+e)
+        i = 0
+        e = 0
+    }
+    else e1++
+
+
+    for (var countryKey in viewModel.keys.countries) {
+        var i = 0, e = 0
+        for (var featureKey in dim1) if (viewModel.data[featureKey] && viewModel.data[featureKey][countryKey])
+            for (var yearKey in dim3)
+                if (viewModel.data[featureKey][countryKey][yearKey])
+                    i++
+                else
+                    e++
+
+        viewModel.density.countries[countryKey] = i/(i+e)
+        if (isNaN(viewModel.density.countries[countryKey]))
+            viewModel.density.countries[countryKey] = 0        
+    }
+
+    $('#selInfo').text(len(dim1) + '⨯' + len(dim2) + '⨯' +  len(dim3))
+    $('#itInfo').text(l1 + '+' + l2 + '+' +  l3)
+    var dens = l1/(l1+e1) + '+' + l2/(l2+e2) + '+' +  l3/(l3+e3)
+    $('#elseInfo').text('- ' + e1 + '-' + e2 + '-' +  e3+ '   ------     ' + dens)
+}
 
 var onLoad = function()
 {
-    vis.groups = new vis.DataSet()
-    vis.dataset = new vis.DataSet()
-    createGraph('2dplot')
+    // setup tabcontrole by adding graph factorys
+    viewModel.tabControl = tabControl({
+        'Map':createPlotlyMapGraph,
+        'Bar':createPlotlyBarGraph,
+        '1D':createPlotly1dGraph,
+        '2D':createPlotly2dGraph,
+        '2D Scatter':createPlotly2dScatterGraph,
+        '3D':createPlotly3dGraph,
+        '3D Scatter':createPlotly3dScatterGraph,
+        'Bubble':createPlotlyBubbleGraph,
+        'Vis 2D':createVis2dGraph,
+        'Vis 3D':createVis2dGraph,
+    })
 
-    var load = function(featureKey)
-    {
+    $('#view')[0].appendChild(viewModel.tabControl)
+
+    // loading jsons and add to viewModel.data viewModel.keys
+    var todosCount = features.length
+    var load = function(featureKey) {
         var xhttp = new XMLHttpRequest()
-        xhttp.onreadystatechange = ()=>
-        {
-            if (xhttp.readyState == 4 && xhttp.status == 200)
-            {
+        xhttp.onreadystatechange = ()=> {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
                 var newFile = JSON.parse(xhttp.responseText)
                 viewModel.data[featureKey] = newFile
-
-                viewModel.keys.features[featureKey] = newFile
-
-                for (var countryId in newFile)
-                {
-                    viewModel.keys.countries[countryId] = newFile[countryId]
-                    for (var yearId in newFile[countryId])
-                    {
-                        viewModel.keys.years[yearId] = newFile[countryId][yearId]
+                viewModel.keys.features[featureKey] = viewModel.keys.features[featureKey]+1 || 1
+                for (var countryId in newFile) {
+                    viewModel.keys.countries[countryId] = viewModel.keys.countries[countryId]+1 || 1
+                    for (var yearId in newFile[countryId]) {
+                        if (yearId == '') console.assert('empty year');
+                        viewModel.keys.years[yearId] = viewModel.keys.years[yearId]+1 || 1
                     }
                 }
-
-                drawTagCloud()
+                if (--todosCount == 0) {
+                    drawTagCloud('div.left .tagCloud', 'countries', s=> $('#cSel').text("∀ countryKey ∊ "+s))
+                    drawTagCloud('div.left .featureCloud', 'features', s=> $('#fSel').text("∀ featureKey ∊ "+s))
+                    updateView()
+                }
             }
         }
         xhttp.open("GET", "../data/"+featureKey+".json", true)
@@ -71,141 +134,72 @@ var onLoad = function()
     for (var i = 0; i < features.length; i++)
         load(features[i])
 
-    $("#features").autocomplete({
-        source:features,
-        select: (ev, ui)=> {
-            featureId = ui.item.value
-            vis.groups.clear()
-            vis.dataset.clear()
+    // setup ui data dependencys
+    new Awesomplete('#query', {
+        list: features,
+        autoFirst: true,
+        minChars: 1,
+    	filter: function(text, input) {
+    		return Awesomplete.FILTER_CONTAINS(text, input.match(/[^\s]*$/)[0])
+    	},
+    	replace: function(text) {
+    		var before = this.input.value.match(/^.+\s*|/)[0]
+    		this.input.value = before + text + " "
+    	}
+    });
 
-            for (var countryId in viewModel.selection.countries)
-                vis.addCountry(countryId)
-        }
-    })
-    $('div.left .histogram')[0].appendChild(createPlotly1dGraph())
+    $('#query').on('input', e=> updateView())
+    updateView()
 }
 
-var drawTagCloud = function()
+var setYear = function(year)
 {
-    //for (country in model)
-    //    model[country].weight = Math.random()
-
-    //model[country].sort((a,b)=> a.weight < b.weight)
-
-    var selectCountry = function(tag, country)
-    {
-        if (viewModel.selection.countries[country])
-        {
-            delete viewModel.selection.countries[country]
-            tag.style.backgroundColor = 'white'
-            vis.removeCountry(country)
-        }
-        else
-        {
-            viewModel.selection.countries[country] = viewModel.data[featureId][country]
-            tag.style.backgroundColor = 'red'
-            vis.addCountry(country)
-        }
-
-        console.log(viewModel.selection)
-        vis.currentGraph.fit()
-        //drawGraph('2dplot', viewModel.selection)
-    }
-
-    $('div.left .tagCloud').empty()
-
-    var cloudModel = viewModel.keys.countries
-    var l = Object.keys(cloudModel).length
-    var i = l
-
-    for (country in cloudModel) // todo: use viewmodel.keys.countries
-    {
-        let tagName = country
-        let tagWeight = i--/l
-        let tag = document.createElement('span')
-            tag.innerHTML = tagName
-            tag.onclick = function() { selectCountry(tag, tagName) }
-            tag.style.fontSize = 0.01 + (1.3 * tagWeight) + 'em'
-            tag.style.marginRight = 0.3 + 'em'
-            tag.style.float = 'left'
-
-        $('div.left .tagCloud')[0].appendChild(tag)
-    }
+    viewModel.selection.years = year
+    updateView()
 }
 
-var createGraph = function(/* div */graphType)
+onSliderChange = function()
 {
-    //todo if (graphType === 'bar')    $('div.right')[0].appendChild(createVis2dGraph());
-    if (graphType === '2dplot') $('div.right')[0].appendChild(createVis2dGraph());
-    //if (graphType === '3dplot') $('div.right')[0].appendChild(createVis3dGraph());
-    //if (graphType === 'map')    $('div.right')[0].appendChild(createD3Map());
+    setYear({ [$('#currentYearSlider').val()]:true })
 }
 
-// ∀ coutry ∊ model:
-//     ∀ year ∊ country:
-//         ∀ value ∊ features:
-//             group=country, x=year, y=value
-
-var createPlotly1dGraph = function()
+var currentProject = 0
+var loadProject = function(inc)
 {
-    var x = [];
-    for (var i = 0; i < 500; i ++)
-    	x[i] = Math.random();
-
-    var data = { x: x, type: 'histogram' }
-    var layout = {
-      autosize: true,
-      width: 300,
-      height: 200,
-      margin: { l: 0, r: 0, b: 0, t: 40, },
-    };
-
-    var container = document.createElement('div')
-        container.className = 'visContainer'
-    Plotly.newPlot(container, [data], layout)
-    return container;
+    currentProject = (currentProject + projects.length + inc) % projects.length
+    var p = projects[currentProject]
+    viewModel.selection = p.selection
+    $('#query').val(p.script)
+    viewModel.tabControl.setGraph(p.defView)
+    updateView()
 }
 
-// ∀ coutry   ∀ years: { group:countryId, x:model[countryId][YearId], y:model[countryId][YearId]['exports']  }   // länder vergleichten
-// ∀ features ∀ years: { group:featureId, x:model['autria'] [YearId], y:model['autria'] [YearId][featureId]  }   // features von einem land
-
-var createVis2dGraph = function()
-{
-    var options = { legend: true, height: '100%' }
-    var container = document.createElement('div')
-        container.className = 'visContainer'
-
-    vis.currentGraph = new vis.Graph2d(container, vis.dataset, vis.groups, options)
-
-    vis.removeCountry = function(country)
+var projects = [
     {
-        vis.dataset.remove(vis.dataset.get({ filter: item=> item.group == country }).map(i=> i.id))
-        vis.groups.remove(country)
-    }
-
-    vis.addCountry = function(country)
+        script: 'x:featureKey, y:countryKey, z:yearKey, group:countryKey',
+        selection: {
+            features:  undefined,
+            countries: { 'United States':true, 'China':true, 'Saudi Arabia':true, Austria:true, Aruba:true },
+            years:     undefined
+        },
+        defView: '3D Scatter'
+    },
     {
-        vis.groups.add({
-            id: country,
-            content: country,
-            interpolation: { enabled:true } ,
-            options: { drawPoints: { style: 'circle' } }
-        })
-
-        var items = []
-        for (year in viewModel.data[featureId][country])
-        {
-            if (viewModel.data[featureId][country][year] != "")
-            {
-                var value = viewModel.data[featureId][country][year]
-                if (!isNaN(value))
-                {
-                    items.push({ x:year, y:value, group:country })
-                }
-            }
-        }
-        vis.dataset.update(items)
+        script: "x:yearKey, y:viewModel.data[featureKey][countryKey][yearKey], group:countryKey + '-' + featureKey",
+        selection: {
+            features:  { 'Arms imports':true, 'Arms exports':true },
+            countries: { 'United States':true, 'China':true, 'Saudi Arabia':true },
+            years:     undefined
+        },
+        defView: '2D'
+    },
+    {
+        script: "x:yearKey, y:featureKey, z:yearKey, group:featureKey",
+        selection: {
+            features:  undefined,
+            countries: { 'United States':true, 'China':true, 'Saudi Arabia':true },
+            years:     undefined
+        },
+        defView: '2D'
     }
-
-    return container;
-}
+]

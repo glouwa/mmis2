@@ -6,27 +6,47 @@
     <link href="view.css" rel="stylesheet" type="text/css" charset="UTF-8">
     <link href="../bower_components/jquery-ui/themes/humanity/jquery-ui.css" rel="stylesheet" type="text/css" charset="UTF-8">
     <link href="../bower_components/vis/dist/vis.min.css" rel="stylesheet" type="text/css" charset="UTF-8">
+    <link href="../bower_components/awesomplete/awesomplete.css" rel="stylesheet" type="text/css" charset="UTF-8">
     <script src="view.js" charset="UTF-8"></script>
+    <script src="tools.js" charset="UTF-8"></script>
+    <script src="controls.js" charset="UTF-8"></script>
+    <script src="graphs.js" charset="UTF-8"></script>
     <script src="../bower_components/jquery/dist/jquery.min.js"></script>
     <script src="../bower_components/jquery-ui/jquery-ui.min.js"></script>
     <script src="../bower_components/vis/dist/vis.min.js"></script>
+    <script src="../bower_components/awesomplete/awesomplete.min.js"></script>
     <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   </head>
   <body onload="onLoad()">
-    <h1 class="main_title">Panda power!</h1>
+    <h1 class="main_title">&#x1f43c; Panda power!</h1>
 
     <div class="top">
-        <input class="inputfield" id="features">
+        <input id='query' class='inputfield' value="x:yearKey, y:viewModel.data[featureKey][countryKey][yearKey], group:countryKey + '-' + featureKey">
+        <div id='fSel' class='line'></div>
+        <div id='cSel' class='line'></div>
+        <div id='ySel' class='line'></div>
+        <button type="button" onclick="loadProject(-1)">prev</button>
+        <button type="button" onclick="loadProject(+1)">next</button>
+        <div id='keysInfo' class='line'></div>
+        <div id='selInfo' class='line'></div>
+        <div id='itInfo' class='line'></div>
+        <div id='elseInfo' class='line'></div>
     </div>
 
     <div class="right">
+        <div id='view'></div>
+        <ul class="nav">
+        </ul>
     </div>
 
     <div class="left">
-        <div class="histogram">
+        <div class="time">
+            <span onclick="setYear(undefined)">All</span>
+            <button type="button" >play</button>
+            <input id='currentYearSlider' type="range" name="year" min="1900" max="2010" oninput="onSliderChange()">
         </div>
-        <div class="tagCloud">
-        </div>
+        <div class="featureCloud"></div>
+        <div class="tagCloud"></div>
     </div>
   </body>
 </html>
