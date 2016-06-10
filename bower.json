@@ -1,0 +1,21 @@
+{
+  "name": "mmis2",
+  "homepage": "https://github.com/glouwa/mmis2",
+  "authors": [
+    "michael m.glatzhofer@student.tugraz.at"
+  ],
+  "description": "new visualization of the gapminder data",
+  "main": "/client/view.html",
+  "keywords": [
+    "gapminder",
+    "visualization"
+  ],
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "awesomplete": "^1.1.0",
+    "jquery": "^3.0.0",
+    "jquery-ui": "^1.11.4",
+    "vis": "^4.16.1"
+  }
+}
