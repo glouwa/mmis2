@@ -60,7 +60,7 @@ var createPlotly1dGraph = function()
             bins:20,
             marker: { line: { width:1 } }
         }
-        Plotly.newPlot(view, [data], { title:toString(viewModel.selection.features) })
+        Plotly.newPlot(view, [data], { title: 'Title' /*toString(viewModel.selection.features)*/  })
     })
 }
 
