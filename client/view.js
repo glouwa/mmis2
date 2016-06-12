@@ -6,14 +6,14 @@ var viewModel = {
         years:         {},
     },
     selection: {
-        features:  { 'Arms imports':true, 'Arms exports':true },
+        features:  { 'Arms_imports[$]':true, 'Arms_exports[$]':true },
         countries: { 'United States':true, 'China':true, 'Saudi Arabia':true },
         years:     undefined
     },
     density: {
-        features:  { 'Arms imports':0.8, 'Arms exports':0.6 },
-        countries: { 'Austria':0.7 },
-        years:     { '1970':0.3 },
+        features:  {},
+        countries: {},
+        years:     {},
     },
     currentGraph: undefined,
 }
@@ -77,7 +77,7 @@ var updateMeta = function()
 
         viewModel.density.countries[countryKey] = i/(i+e)
         if (isNaN(viewModel.density.countries[countryKey]))
-            viewModel.density.countries[countryKey] = 0        
+            viewModel.density.countries[countryKey] = 0
     }
 
     $('#selInfo').text(len(dim1) + '⨯' + len(dim2) + '⨯' +  len(dim3))
@@ -127,7 +127,7 @@ var onLoad = function()
                 }
             }
         }
-        xhttp.open("GET", "../data/"+featureKey+".json", true)
+        xhttp.open("GET", "../data/"+escape(featureKey)+".json", true)
         xhttp.send()
     }
 
@@ -149,7 +149,7 @@ var onLoad = function()
     });
 
     $('#query').on('input', e=> updateView())
-    updateView()
+    //updateView()
 }
 
 var setYear = function(year)
@@ -187,7 +187,7 @@ var projects = [
     {
         script: "x:yearKey, y:viewModel.data[featureKey][countryKey][yearKey], group:countryKey + '-' + featureKey",
         selection: {
-            features:  { 'Arms imports':true, 'Arms exports':true },
+            features:  { 'Arms_imports[$]':true, 'Arms_exports[$]':true },
             countries: { 'United States':true, 'China':true, 'Saudi Arabia':true },
             years:     undefined
         },

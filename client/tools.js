@@ -1,12 +1,45 @@
 var features = [
-    'Agriculture (p of GDP)', 'Arms exports', 'Arms imports', 'Exports (p of GDP)', 'Foreign investment inflow',
-    'Indicator_Energyproductionpercapita', 'Number of billionaires per M',
-    'agriculture land', 'broadband per 100', 'broadband total', 'cell phone per 100', 'cell phone total',
-    'energy use per person', 'energy use total', 'expenditure primary', 'expenditure secondary', 'expenditure tertiery',
-    'indicator SI_POV_NAHC.xls',
-    'hiv estimated 15-49',
-    'indicator pwt7.1', 'indicator_t 15-24 unemploy', 'indicator_t 25-54 unemploy', 'indicator_t above 15 unemploy',
-    'indicator_t agriculture employ' ]
+  'Agriculture[%GDP]',
+  'Agriculture_employes[#]',
+  'Agriculture_land[]',
+  'Arms_exports[$]',
+  'Arms_imports[$]',
+  'Army[#]',
+  'Average_billionares_age[years]',
+  'Broadband[#]',
+  'Broadband[per_100]',
+  'Cell_phone[#]',
+  'Cell_phone[per_100]',
+  'Country_GDP[$]',
+  'Energy_production[per_capita]',
+  'Energy_use[]',
+  'Energy_use[per_person]',
+  'Expenditure_primary_education[%GDP_per_capita]',
+  'Expenditure_secondary_education[%GDP_per_capita]',
+  'Expenditure_tertiary_education[%GDP_per_capita]',
+  'Exports[%GDP]',
+  'Foreign_investment_inflow[$]',
+  'GDP_per_employee[$]',
+  'Government_expenditure_on_health_per_capita[$]',
+  'Income[$_per_person]',
+  'Inflation[%]',
+  'Life_expectancy_at_birth[years]',
+  'New_births[#]',
+  'Number_billionaires[per_1M_inhabitants ]',
+  'Population[#]',
+  'Population_growth[%]',
+  'Poverty_ratio_at_$1,25_a_day[%population]',
+  'Self-employed[%]',
+  'Self_employed[%]',
+  'Suicides[#]',
+  'Unemployed_15-24[%]',
+  'Unemployed_25-54[%]',
+  'Unemployed_above_15[%]',
+  'Urbanpopulation[%]',
+  'Working_hours_per_week[hours_per_week]'
+]
+
+
 
 var plotLineColors = [ '#37d8e6', '#ff0100', '#8c50cf', '#75c840', '#f79646', '#3f51b5',  '#607d8b', '#03a9f4']
 var len = o=> Object.keys(o).length

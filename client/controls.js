@@ -17,7 +17,7 @@ var drawTagCloud = function(htmlElementSelector, dim, callback)
             tag.onclick = click
             //tag.style.fontSize = 0.01 + (1.3 * tagWeight()) + 'em'
             tag.update = function() {
-                console.log(dim)
+                //console.log(dim)
 
                 if (!viewModel.selection[dim])
                         tag.style.backgroundColor = str2Color(tag.innerText, 0.4)
@@ -52,8 +52,6 @@ var drawTagCloud = function(htmlElementSelector, dim, callback)
             tag.style.backgroundColor = str2Color(tagName, 0.4)
         $(htmlElementSelector)[0].appendChild(tag)
     }
-
-    updateView()
 }
 
 var tabControl = function(tabs)
@@ -68,9 +66,9 @@ var tabControl = function(tabs)
         viewModel.currentGraph = tabs[name]()
         view.innerHTML = ''
         view.appendChild(viewModel.currentGraph)
-        console.log(viewModel.currentGraph)
+        //console.log(viewModel.currentGraph)
     }
-    
+
     view.setGraph('1D')
 
     for (let name in tabs) {

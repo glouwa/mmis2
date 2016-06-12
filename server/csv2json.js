@@ -24,22 +24,33 @@ var convertFile = function(filenameOhneExt)
     csv .fromStream(stream, { headers:true })
         .on("error", e => console.log(e))
         .on("end", () => fs.writeFileSync('../data/' + filenameOhneExt + '.json', JSON.stringify(result, null, 2)))
-        .on("data", data =>
+        .on("data", country => // country == one line in csv (one country)
         {
-            for(var name in data)
-                data[name] = data[name].replace(',', '.')
+            for(var year in country)
+                country[year] = country[year].replace(',', '.')
 
-            var country = undefined
-            for(var name in data)
+            var countryName = undefined
+            for(var year in country)
             {
-                var asNumber = Number(name)
-                if (isNaN(asNumber)) {
-                    country = data[name]
-                    delete data[name]
+                var keyAsNumber = Number(year)
+
+                if (isNaN(keyAsNumber)) { // if key is not a number (not a year) -> its the countryName, save it and delete from country
+                    countryName = country[year]
+                    delete country[year]
+                }
+                else if (country[year] === '') { // discard empty values
+                    delete country[year]
+                }
+                else
+                {
+                    country[year] = Number(country[year])
                 }
             }
-            //console.log({ [country]:data })
-            result[country] = data
+            //console.log({ [countryName]:country })
+            if (Object.keys(country).length > 0){
+                result[countryName] = country
+                console.assert(countryName,filenameOhneExt, country)
+            }
         })
 }
 

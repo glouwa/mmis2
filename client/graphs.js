@@ -46,6 +46,9 @@ var createPlotly1dGraph = function()
             for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
                 for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
                     //var item = eval('({' + $('#query').val() + '})')
+
+                    console.assert(viewModel.data[featureKey][countryKey][yearKey])
+                    console.assert(typeof(viewModel.data[featureKey][countryKey][yearKey]) === 'number')
                     x.push(viewModel.data[featureKey][countryKey][yearKey])
                 }
             }
