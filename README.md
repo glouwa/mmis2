@@ -60,6 +60,7 @@ anmerkung: color kann man auch als assoziation implementieren,
     ```
 
 3. die formen der assoziation auf der rechten seite im detail:
+
     3.1. es wird eine konstante auf die achse aufgetragen: x:3                                              
             -> für den user sinnlos, weil immer das selbe auf der achse angezeit wird (gerade), aber erklärt das technische prinzip
 
