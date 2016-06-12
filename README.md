@@ -10,8 +10,9 @@ designdodos:
 - ui für 'was' und 'wie' man es sehen will
     - hier ist zu bedenken
         - selection
+        - gruppen
         - achsen dimensions assozaition
-        - gruppen 
+        - man kann auf eine achse Keys auftragen (jahr, coutry, feature) oder values (viewModel.data[..][..][..])
         - sortierung
 
 todos:
