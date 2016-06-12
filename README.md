@@ -38,19 +38,21 @@ irgendwie ein gemeinsames interface finden.
 das graph api besteht aus einem set von assoziationen.
 es muss mindestens eine assoziation geben (x) sonst sieht man gar nix, die anderen sind optional.
 je mehr assoziationen desto mehr achsen bzw. eigenschaften wie farbe kann man im graph sehen. 1D bis 3D plus farbe...
-man kann assoziationen für folgende 'achsen' machen: x, y, z, gruppe, radius, color                 // achse is a blödes wort, weil farbe gruppe radius auch dabei ist (vll 'visible'?)
+man kann assoziationen für folgende 'achsen' machen: x, y, z, gruppe, radius, color                 (achse is a blödes wort, weil farbe gruppe radius auch dabei ist (vll 'visible'?))
 anmerkung: color kann man auch als assoziation implementieren,
            wird derzeit aber automatisch von plotly über die gruppe gemacht
 
-1. eine assoziation definiert was man auf der 'achse' sieht                                         // 'visible' statt 'achse'?
-   (bzw. nicht nur auf der achse, sonden auch anderen eigenschaften der des graphen,               
+1. eine assoziation definiert was man auf der 'achse' sieht                                         ('visible' statt 'achse'?)
+   (bzw. nicht nur auf der achse, sonden auch anderen eigenschaften der des graphen,
     wie z.b. 'welche punkte bilden eine linie' oder was hat die gleiche farbe)
 
 2. eine assoziation hat folgende form:  
     ```javascript
                                              (kann man auch als = sehen)
                                              ↓
-        (x | y | z | group | radius | color) : const | featureKey | countryKey | yearKey | data[featureKey|const][countryKey|const][yearKey|const]
+        (x | y | z | group | radius | color) : const
+                                             | featureKey | countryKey | yearKey
+                                             | data[featureKey|const][countryKey|const][yearKey|const]
         // const steht hier für konstante zahl oder string.
         // hier sei angemerkt, das die alle ausdrücke rechts immer ein string, number, oder Date sein müssen, weil plotly nur diese typen akzeptiert.     
         // für data[a][b][c] kein problem, ist eh immer number    
