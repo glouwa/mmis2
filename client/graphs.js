@@ -64,23 +64,45 @@ var createPlotly1dGraph = function()
     })
 }
 
-var createPlotlyBarGraph = function(draw)
-{
+var createPlotlyBarGraph = function(draw){
+
+
     return createPlotlyBase(view=>
     {
-        Plotly.plot(view,
+        var countries_array = [];
+        var values_array = [];
+        var feature = Object.keys(viewModel.selection.features)[0]
+        var year = '2000'
+
+        //var dim1 = viewModel.selection.features
+        var dim2 = viewModel.selection.countries
+        //var dim3 = viewModel.selection.years
+        //for (var featureKey in dim1) if (viewModel.data[featureKey]) {
+        for (var countryKey in dim2){
+            if (viewModel.data[feature]) {
+                if (viewModel.data[feature][countryKey]) {
+                    if (viewModel.data[feature][countryKey][year]) {
+                        countries_array.push(countryKey);
+                        values_array.push(viewModel.data[feature][countryKey][year]);
+                    }
+                }
+            }
+        }
+
+        console.log(values_array);
+        Plotly.newPlot(view,
             [{
                 type: 'bar',
-                x: ['giraffes', 'orangutans', 'monkeys', 'pandas'],
-                y: [5, 10, 2, 8],
+                x: countries_array,
+                y: values_array,
                 marker: {
-                    color: '#C8A2C8',
+                    color: 'green',
                     line: {
                         width:1
                     }
                 }
             }],
-            { title: 'title' }
+            { title: feature }
         )
     })
 }
