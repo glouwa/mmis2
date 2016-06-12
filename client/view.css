@@ -7,7 +7,6 @@ body{
 {
     height: 7%;
     text-align: center;
-    font-size: 3em;
     font-weight: normal;
     -webkit-margin-after: 0%;
     -webkit-margin-before: 0%;
@@ -16,12 +15,11 @@ body{
     padding-top: 0.3%;
 }
 
-.right-block
-{
+.right-block {
     background-color: pink;
-    width: 69%;
+    width: 65%;
     height: 88.5%;
-    float: right;
+    float: left;
 }
 
 .left-block
@@ -44,12 +42,21 @@ body{
 
 .tagCloud
 {
-  width: 100%;
-  height: 90%;
-  overflow-y: auto;
-  word-wrap: break-word;
-  background-color: cyan;
+    width: 100%;
+    height: 90%;
+    overflow-y: auto;
+    word-wrap: break-word;
+    background-color: cyan;
 }
+
+.cloudTag
+{
+    margin-right: 0.3em;
+    float: left;
+    -webkit-user-select: none;
+    cursor: crosshair;
+}
+
 
 .time
 {
@@ -76,56 +83,6 @@ body{
     background-color: violet;
 }
 
-
-.line {
-    max-width: 90%;
-    max-height: 1em;
-    overflow: hidden;
-}
-
-
-
-.featureCloud
-{
-  padding-top: 2em;
-}
-
-.cloudTag
-{
-    margin-right: 0.3em;
-    float: left;
-    -webkit-user-select: none;
-    cursor: crosshair;
-}
-
-.tabControl{
-    border: 1px lightgray solid;
-}
-
-.histogram{
-    height: 30%;
-}
-
-/*.body
-{
-    margin-top: 5%;
-    margin-right: 3%;
-    margin-bottom: 3%;
-    margin-left: 3%;
-}*/
-
-div.awesomplete {
-	width:95%;
-}
-
-/*.inputfield
-{
-    width: 100%;
-    font-size: larger;
-    font-family: monospace;
-    margin: 1%;
-}*/
-
 .graphView
 {
     height: calc(100% - 4em);
@@ -134,29 +91,19 @@ div.awesomplete {
     padding: 1em;
 }
 
-.navbox {
-	position: relative;
-	float: left;
-}
-
-ul.nav {
-	list-style: none;
-	display: block;
-	width: 80px;
-	position: relative;
-	top: 200px;
+ul.graph-type {
+    list-style: none;
+    display: block;
+    position: relative;
     float: left;
-	/*left: 100px;*/
-	padding: 60px 0 60px 0;
-	background: url(../img/shad2.png) no-repeat;
-	-webkit-background-size: 50% 100%;
+    background: url(../img/shad2.png) no-repeat;
+    -webkit-background-size: 50% 100%;
 }
-
 li {
-	margin: 5px 0 0 0;
+    margin: 5% 0 0 0;
 }
 
-ul.nav li a {
+ul.graph-type li a {
 	-webkit-transition: all 0.3s ease-out;
 	background: #cbcbcb url(../img/border.png) no-repeat;
 	color: #174867;
@@ -169,8 +116,39 @@ ul.nav li a {
 	-webkit-box-shadow: 2px 2px 4px #888;
 }
 
-ul.nav li a:hover {
+ul.graph-type li a:hover {
 	background: #ebebeb url(../img/border.png) no-repeat;
 	color: #67a5cd;
 	padding: 7px 15px 7px 30px;
 }
+
+
+/*.line {
+    max-width: 90%;
+    max-height: 1em;
+    overflow: hidden;
+}
+
+/*.tabControl{
+    border: 1px lightgray solid;
+}*/
+
+.histogram{
+    height: 30%;
+}
+
+/*
+
+div.awesomplete {
+	width:95%;
+}
+
+/*.inputfield
+{
+    width: 100%;
+    font-size: larger;
+    font-family: monospace;
+    margin: 1%;
+}
+
+*/

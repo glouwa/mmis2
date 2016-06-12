@@ -80,7 +80,7 @@ var tabControl = function(tabs)
                     viewModel.currentGraph.update()
                 }
             li.appendChild(a)
-        $('.nav')[0].appendChild(li)
+        $('graph-type')[0].appendChild(li)
     }
     return view
 }

@@ -88,7 +88,7 @@ var updateMeta = function()
 
 var onLoad = function()
 {
-    // setup tabcontrole by adding graph factorys
+    // setup tabcontrols by adding graph factories
     viewModel.tabControl = tabControl({
         'Map':createPlotlyMapGraph,
         'Bar':createPlotlyBarGraph,
