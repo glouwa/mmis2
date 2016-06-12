@@ -27,6 +27,8 @@ bugs:
 - label fehlt wenn nur eine gruppe existiert
 
 
+ACHTUNG: ich hab erst angefangen den text als markdown zu formatieren, des ist auf githab aber noch nicht lesbar,
+also am besten das README.md als plain text im atom lesen.
 
 # Technische sichtweise der assoziationen:
 sry, das hätt ich dir früher zusammenschreiben sollen, weil an der stelle müssen wir
@@ -45,17 +47,17 @@ anmerkung: color kann man auch als assoziation implementieren,
     wie z.b. 'welche punkte bilden eine linie' oder was hat die gleiche farbe)
 
 2. eine assoziation hat folgende form:  
-```javascript
-                                         (kann man auch als = sehen)
-                                         ↓
-    (x | y | z | group | radius | color) : const | featureKey | countryKey | yearKey | data[featureKey|const][countryKey|const][yearKey|const]
-    // const steht hier für konstante zahl oder string.
-    // hier sei angemerkt, das die alle ausdrücke rechts immer ein string, number, oder Date sein müssen, weil plotly nur diese typen akzeptiert.     
-    // für data[a][b][c] kein problem, ist eh immer number    
-    // countryKey und featureKey nimmt immer string werte an (in der selection sind immer strings)
-    // yearKey nimmt immer number werte an (in der year selection sind immer numbers) (ja, das in ein Date zu konvertieren solten wir noch machen)
-    // theoretisch könnte man hier auch js expressinos einsetzen, aber das sollten wir im ui weglassen (zu kompliziert)
-```
+    ```javascript
+                                             (kann man auch als = sehen)
+                                             ↓
+        (x | y | z | group | radius | color) : const | featureKey | countryKey | yearKey | data[featureKey|const][countryKey|const][yearKey|const]
+        // const steht hier für konstante zahl oder string.
+        // hier sei angemerkt, das die alle ausdrücke rechts immer ein string, number, oder Date sein müssen, weil plotly nur diese typen akzeptiert.     
+        // für data[a][b][c] kein problem, ist eh immer number    
+        // countryKey und featureKey nimmt immer string werte an (in der selection sind immer strings)
+        // yearKey nimmt immer number werte an (in der year selection sind immer numbers) (ja, das in ein Date zu konvertieren solten wir noch machen)
+        // theoretisch könnte man hier auch js expressinos einsetzen, aber das sollten wir im ui weglassen (zu kompliziert)
+    ```
 
 3. die formen der assoziation auf der rechten seite im detail:
     3.1. es wird eine konstante auf die achse aufgetragen: x:3                                              
