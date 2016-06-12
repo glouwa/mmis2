@@ -35,6 +35,7 @@ irgendwie ein gemeinsames interface finden.
 ##Graph api, alias definiere achsen, alias assoziationen:
 das graph api besteht aus einem set von assoziationen.
 es muss mindestens eine assoziation geben (x) sonst sieht man gar nix, die anderen sind optional.
+je mehr assoziationen desto mehr achsen bzw. eigenschaften wie farbe kann man im graph sehen. 1D bis 3D plus farbe...
 man kann assoziationen für folgende 'achsen' machen: x, y, z, gruppe, radius, color                 // achse is a blödes wort, weil farbe gruppe radius auch dabei ist (vll 'visible'?)
 anmerkung: color kann man auch als assoziation implementieren,
            wird derzeit aber automatisch von plotly über die gruppe gemacht
@@ -43,7 +44,9 @@ anmerkung: color kann man auch als assoziation implementieren,
    (bzw. nicht nur auf der achse, sonden auch anderen eigenschaften der des graphen,               
     wie z.b. 'welche punkte bilden eine linie' oder was hat die gleiche farbe)
 
-2. eine assoziation hat folgende form:   (kann man auch als = sehen)
+2. eine assoziation hat folgende form:  
+```javascript
+                                         (kann man auch als = sehen)
                                          ↓
     (x | y | z | group | radius | color) : const | featureKey | countryKey | yearKey | data[featureKey|const][countryKey|const][yearKey|const]
     // const steht hier für konstante zahl oder string.
@@ -51,7 +54,8 @@ anmerkung: color kann man auch als assoziation implementieren,
     // für data[a][b][c] kein problem, ist eh immer number    
     // countryKey und featureKey nimmt immer string werte an (in der selection sind immer strings)
     // yearKey nimmt immer number werte an (in der year selection sind immer numbers) (ja, das in ein Date zu konvertieren solten wir noch machen)
-    theoretisch könnte man hier auch js expressinos einsetzen, aber das sollten wir im ui weglassen (zu kompliziert)
+    // theoretisch könnte man hier auch js expressinos einsetzen, aber das sollten wir im ui weglassen (zu kompliziert)
+```
 
 3. die formen der assoziation auf der rechten seite im detail:
     3.1. es wird eine konstante auf die achse aufgetragen: x:3                                              
@@ -86,7 +90,7 @@ anmerkung: color kann man auch als assoziation implementieren,
                               -> (selection.country.length viele werte) oder einfach gesagt: endlich für jedes land genau ein punkt :D
 
 ## selections
-wird dann gebraucht wenn ein ...Key verwendet wird, und definiert welche werte ...Key annimmt
+wird dann gebraucht wenn ein ...Key verwendet wird, und definiert welche werte ...Key annimmt.
 verwendet man den ...Key NICHT aber es gibt eine selection kann es zu problemen führen (mein problem?)
 
 ## die formen unserer derzeitigen examples:
@@ -115,6 +119,7 @@ im folgenden js code ist:
 es ist nicht gesagt das defView dwe einzige sinnvolle graph typ ist,
 können mehrere sein, defView definiert nur welcher als default angezeigt wird.
 
+```javascript
 {   // zeigt was alles da ist (innerhalb der selection) (3D)
     script: 'x:featureKey, y:countryKey, z:yearKey, group:countryKey',
     selection: {
@@ -155,3 +160,4 @@ können mehrere sein, defView definiert nur welcher als default angezeigt wird.
     },
     defView: '2D Scatter'
 }
+```
