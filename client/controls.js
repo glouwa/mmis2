@@ -44,7 +44,7 @@ var drawTagCloud = function(htmlElementSelector, dim, callback)
         updateView()
     }))
 
-    //var sortedModel = model[country].sort((a,b)=> a.weight < b.weight)
+    var sortedModel = model[country].sort((a,b)=> a.weight < b.weight)
     for (key in viewModel.keys[dim]) {
         let tagName = key
         let tag = createTag(tagName, ()=> onTagClick(tag, tagName))
@@ -65,11 +65,13 @@ var tabControl = function(tabs)
             viewModel.currentGraph.deactivate()
         viewModel.currentGraph = tabs[name]()
         view.innerHTML = ''
-        view.appendChild(viewModel.currentGraph)
+        //view.appendChild(viewModel.currentGraph) //causes an unneeded tag
         //console.log(viewModel.currentGraph)
     }
 
-    view.setGraph('1D')
+    view.setGraph('Histogram')
+
+    console.log($('.graph-type')[0])
 
     for (let name in tabs) {
         var li = document.createElement('li')
@@ -80,7 +82,7 @@ var tabControl = function(tabs)
                     viewModel.currentGraph.update()
                 }
             li.appendChild(a)
-        $('graph-type')[0].appendChild(li)
+        $('.graph-type')[0].appendChild(li)
     }
     return view
 }
