@@ -68,8 +68,8 @@ anmerkung: color kann man auch als assoziation implementieren,
     3.1. es wird eine konstante auf die achse aufgetragen: x:3                                              
             -> für den user sinnlos, weil immer das selbe auf der achse angezeit wird (gerade), aber erklärt das technische prinzip
 
-    3.2. es wird ein ...Key auf die achse aufgetragen: x:featureKey | x:countryKey | x:yearKey
-            -> dann sieht man alle länder, jahre, features der selection auf dieser 'achse'
+    3.2. es wird ein ...Key auf die achse aufgetragen: x:countryKey | x:yearKey | x:featureKey
+            -> dann sieht man alle länder oder jahre oder features der selection auf dieser 'achse'
 
     3.3. es wird ein wert aus der db auf die 'achse' aufgetragen, dabei gibt es wieder 3 fälle,
             die sich aus dem notwendigen array zugriff ergeben (viewModel.data[...][...][...])
@@ -98,11 +98,9 @@ anmerkung: color kann man auch als assoziation implementieren,
 
 ## selections
 wird dann gebraucht wenn ein ...Key verwendet wird, und definiert welche werte ...Key annimmt.
-verwendet man den ...Key NICHT aber es gibt eine selection kann es zu problemen führen (mein problem?)
+verwendet man den ...Key NICHT aber es gibt eine selection kann es zu problemen kommen (mein problem?)
 
 ## die formen unserer derzeitigen examples:
-  (ganz unten die assoziations scripts die man mit 'next' und 'prev' durchschalten kann)
-
 - typische graphen verwenden eine assoziatin der form (3.3) und der rest ist die form (3.2).
   also einmal (3.3) für einen zahlen wert aus der db.
   und 0 bis 3 mal die form (3.2) falls eine 'achse' die länder, jahre oder features (für den user eher komisch) zeigen soll.
@@ -118,13 +116,16 @@ verwendet man den ...Key NICHT aber es gibt eine selection kann es zu problemen 
   so wird gdp selection.length oft gezeichnet :( (nicht so wichtig)
 
 ## derzeitige examples javascript (assoziation + selection + graphtype = examples)
+der folgende code ist in view.js.
+er definiert die examples assoziations scripts die man mit 'next' und 'prev' durchschalten kann.
+
 im folgenden js code ist:
    assoziation = script
    selection = selection
    graphtype = defView
 
-es ist nicht gesagt das defView dwe einzige sinnvolle graph typ ist,
-können mehrere sein, defView definiert nur welcher als default angezeigt wird.
+es ist nicht gesagt das defView der einzige sinnvolle graph typ ist,
+es können mehrere sein. defView definiert nur welcher als default angezeigt wird.
 
 ```javascript
 {   // zeigt was alles da ist (innerhalb der selection) (3D)
