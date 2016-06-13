@@ -48,16 +48,18 @@ anmerkung: color kann man auch als assoziation implementieren,
 
 2. eine assoziation hat folgende form:  
     ```javascript
-                                             (kann man auch als = sehen)
+                                             (kann man auch als := sehen)
                                              ↓
         (x | y | z | group | radius | color) : const
                                              | featureKey | countryKey | yearKey
                                              | data[featureKey|const][countryKey|const][yearKey|const]
         // const steht hier für konstante zahl oder string.
-        // hier sei angemerkt, das die alle ausdrücke rechts immer ein string, number, oder Date sein müssen, weil plotly nur diese typen akzeptiert.     
-        // für data[a][b][c] kein problem, ist eh immer number    
-        // countryKey und featureKey nimmt immer string werte an (in der selection sind immer strings)
-        // yearKey nimmt immer number werte an (in der year selection sind immer numbers) (ja, das in ein Date zu konvertieren solten wir noch machen)
+        // hier sei angemerkt, das die alle ausdrücke rechts immer ein string, number, oder Date sein müssen,
+        // weil plotly nur diese typen akzeptiert.
+        //    setzt man eine konstante ein muss man darauf selbst achten
+        //    countryKey und featureKey nimmt immer string werte an (in der selection sind immer strings)
+        //    yearKey nimmt immer number werte an (in der year selection sind immer numbers) (ja, das in ein Date zu konvertieren solten wir noch machen)
+        //    für data[a][b][c] kein problem, ist eh immer number    
         // theoretisch könnte man hier auch js expressinos einsetzen, aber das sollten wir im ui weglassen (zu kompliziert)
     ```
 
@@ -72,15 +74,15 @@ anmerkung: color kann man auch als assoziation implementieren,
     3.3. es wird ein wert aus der db auf die 'achse' aufgetragen, dabei gibt es wieder 3 fälle,
             die sich aus dem notwendigen array zugriff ergeben (viewModel.data[...][...][...])
 
-            1. nur konstanten als index: viewModel.data['gdp']['Austria']['1970']
+            3.3.1. nur konstanten als index: viewModel.data['gdp']['Austria']['1970']
                 -> man sieht auf der achse immer den selben feature wert. auch recht sinnlos.
 
-            2. ...key als index: viewModel.data[featureKey][countryKey][yearKey]:
+            3.3.2. ...key als index: viewModel.data[featureKey][countryKey][yearKey]:
                 -> man sieht auf der achse für jedes element der selection genau einen wert
                    jeder ...Key hat seine eigene selection
                    man sieht also selection.features.length * selection.country.length * selection.year.length viele punkte
 
-            3. mischform: x:viewModel.data[featureKey][countryKey]['1970']:
+            3.3.3. mischform: x:viewModel.data[featureKey][countryKey]['1970']:
                 -> man sieht auf der achse für jedes element der selected features UND countries den wert von 1970.
                    (das sind selection.features.length * selection.country.length viele werte)
 
