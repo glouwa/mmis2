@@ -16,15 +16,8 @@ var createViewBase = function(type, className, onUpdate)
 var createPlotlyBase = function(draw)
 {
     var d3 = Plotly.d3;
-    var WIDTH_IN_PERCENT_OF_PARENT = 90, HEIGHT_IN_PERCENT_OF_PARENT = 65;
-    var gd3 = d3.select('body')
+    var gd3 = d3.select('#view')
         .append('div')
-        .style({
-            width: WIDTH_IN_PERCENT_OF_PARENT + '%',
-            marginLeft: (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
-            height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
-            marginTop: '2em'
-        })
 
     var view = gd3.node()
         view.deactivate = ()=> view.update = undefined
@@ -73,11 +66,7 @@ var createPlotlyBarGraph = function(draw){
         var values_array = [];
         var feature = Object.keys(viewModel.selection.features)[0]
         var year = '2000'
-
-        //var dim1 = viewModel.selection.features
         var dim2 = viewModel.selection.countries
-        //var dim3 = viewModel.selection.years
-        //for (var featureKey in dim1) if (viewModel.data[featureKey]) {
         for (var countryKey in dim2){
             if (viewModel.data[feature]) {
                 if (viewModel.data[feature][countryKey]) {

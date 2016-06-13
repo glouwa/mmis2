@@ -56,8 +56,8 @@ var drawTagCloud = function(htmlElementSelector, dim, callback)
 
 var tabControl = function(tabs)
 {
-    var view = document.createElement('div')
-        view.className = 'tabControl'
+    var view = $('#view')
+        //view.className = 'tabControl'
 
     view.setGraph = function(name) {
         console.log(name)
@@ -65,13 +65,12 @@ var tabControl = function(tabs)
             viewModel.currentGraph.deactivate()
         viewModel.currentGraph = tabs[name]()
         view.innerHTML = ''
-        //view.appendChild(viewModel.currentGraph) //causes an unneeded tag
+        view.appendChild(viewModel.currentGraph) //causes an unneeded tag
         //console.log(viewModel.currentGraph)
     }
 
     view.setGraph('Histogram')
 
-    console.log($('.graph-type')[0])
 
     for (let name in tabs) {
         var li = document.createElement('li')
