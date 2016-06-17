@@ -18,12 +18,13 @@ var viewModel = {
     currentGraph: undefined,
 }
 
+
 var updateView = function()
 {
     console.log('updateView')
     updateMeta()
-    $('div.left .tagCloud')    .children().each((index, value)=> value.update())
-    $('div.left .featureCloud').children().each((index, value)=> value.update())
+    $('.tagCloud')    .children().each((index, value)=> value.update())
+    $('.featureCloud').children().each((index, value)=> value.update())
     $('#fSel').text("∀ featureKey ∊ "+ toString(viewModel.selection.features))
     $('#cSel').text("∀ countryKey ∊ "+ toString(viewModel.selection.countries))
     $('#ySel').text("∀ yearKey ∊ *")
@@ -95,11 +96,11 @@ var onLoad = function()
         '1D':createPlotly1dGraph,
         '2D':createPlotly2dGraph,
         '2D Scatter':createPlotly2dScatterGraph,
+        '2D Bubble':createPlotlyBubbleGraph,
         '3D':createPlotly3dGraph,
         '3D Scatter':createPlotly3dScatterGraph,
-        'Bubble':createPlotlyBubbleGraph,
         'Vis 2D':createVis2dGraph,
-        'Vis 3D':createVis2dGraph,
+        //'Vis 3D':createVis2dGraph,
     })
 
     $('#view')[0].appendChild(viewModel.tabControl)
@@ -121,9 +122,28 @@ var onLoad = function()
                     }
                 }
                 if (--todosCount == 0) {
-                    drawTagCloud('div.left .tagCloud', 'countries', s=> $('#cSel').text("∀ countryKey ∊ "+s))
-                    drawTagCloud('div.left .featureCloud', 'features', s=> $('#fSel').text("∀ featureKey ∊ "+s))
-                    updateView()
+                    drawTagCloud('.tagCloud', 'countries', s=> $('#cSel').text("∀ countryKey ∊ "+s))
+                    drawTagCloud('.featureCloud', 'features', s=> $('#fSel').text("∀ featureKey ∊ "+s))
+
+                    // setup ui data dependencys
+                    new Awesomplete('#query', {
+                        list: features
+                              .concat(Object.keys(viewModel.keys.years))
+                              .concat(Object.keys(viewModel.keys.countries))
+                              .map(i => "'" + i + "'")
+                              .concat(['viewModel.data[featureKey][countryKey][yearKey]']),
+                        autoFirst: true,
+                        minChars: 1,
+                    	filter: function(text, input) {
+                    		return Awesomplete.FILTER_CONTAINS(text, input.match(/[^\s]*$/)[0])
+                    	},
+                    	replace: function(text) {
+                    		var before = this.input.value.match(/^.+\s*|/)[0]
+                    		this.input.value = before + text + " "
+                    	}
+                    });
+
+                    loadProject(0)
                 }
             }
         }
@@ -134,33 +154,22 @@ var onLoad = function()
     for (var i = 0; i < features.length; i++)
         load(features[i])
 
-    // setup ui data dependencys
-    new Awesomplete('#query', {
-        list: features,
-        autoFirst: true,
-        minChars: 1,
-    	filter: function(text, input) {
-    		return Awesomplete.FILTER_CONTAINS(text, input.match(/[^\s]*$/)[0])
-    	},
-    	replace: function(text) {
-    		var before = this.input.value.match(/^.+\s*|/)[0]
-    		this.input.value = before + text + " "
-    	}
-    });
-
     $('#query').on('input', e=> updateView())
-    //updateView()
 }
 
 var setYear = function(year)
 {
+    if (!year)
+        $('#selectedYear').text('')
     viewModel.selection.years = year
     updateView()
 }
 
 onSliderChange = function()
 {
-    setYear({ [$('#currentYearSlider').val()]:true })
+    var yearStr = $('#currentYearSlider').val()
+    $('#selectedYear').text(yearStr)
+    setYear({ [yearStr]:true })
 }
 
 var currentProject = 0
@@ -175,14 +184,14 @@ var loadProject = function(inc)
 }
 
 var projects = [
-    {
-        script: 'x:featureKey, y:countryKey, z:yearKey, group:countryKey',
+    {   // life expectancy histogram
+        script: "x:viewModel.data[featureKey][countryKey][yearKey]",
         selection: {
-            features:  undefined,
-            countries: { 'United States':true, 'China':true, 'Saudi Arabia':true, Austria:true, Aruba:true },
-            years:     undefined
+            features:  { 'Life_expectancy_at_birth[years]':true },
+            countries: undefined,
+            years:     { '2010':true }
         },
-        defView: '3D Scatter'
+        defView: '1D'
     },
     {
         script: "x:yearKey, y:viewModel.data[featureKey][countryKey][yearKey], group:countryKey + '-' + featureKey",
@@ -194,6 +203,15 @@ var projects = [
         defView: '2D'
     },
     {
+        script: "x:viewModel.data['Country_GDP[$]'][countryKey][yearKey], y:viewModel.data['Suicides[#]'][countryKey][yearKey], group:countryKey, r:viewModel.data['Urbanpopulation[%]'][countryKey][yearKey]",
+        selection: {
+            features:  { 'Arms_imports[$]':'not used'},
+            countries: undefined,
+            years:     undefined
+        },
+        defView: '2D Scatter'
+    },
+    {
         script: "x:yearKey, y:featureKey, z:yearKey, group:featureKey",
         selection: {
             features:  undefined,
@@ -201,5 +219,23 @@ var projects = [
             years:     undefined
         },
         defView: '2D'
-    }
+    },
+    {
+        script: 'x:featureKey, y:countryKey, z:yearKey, group:countryKey',
+        selection: {
+            features:  undefined,
+            countries: { 'United States':true, 'China':true, 'Saudi Arabia':true, Austria:true, Aruba:true },
+            years:     undefined
+        },
+        defView: '3D Scatter'
+    },
+    {
+        script: 'x:countryKey, y:viewModel.data[featureKey][countryKey][yearKey], group:featureKey',
+        selection: {
+            features:  { 'Arms_imports[$]':true, 'Arms_exports[$]':true },
+            countries: undefined,
+            years:     undefined
+        },
+        defView: 'Bar'
+    },
 ]

@@ -48,6 +48,13 @@ var toString = o=> {
     return '{ ' + Object.keys(o).reduce((i, a)=> "'" + a +"', " + i, '') + ' }'
 }
 
+var objValues2Array = function(o){
+    var a = []
+    for (var k in o)
+        a.push(o[k])
+    return a
+}
+
 //var str2Color = s=> plotLineColors[Math.abs(hashCode(s))%plotLineColors.length]
 var str2Color = function(s, a)
 {

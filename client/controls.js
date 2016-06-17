@@ -28,7 +28,7 @@ var drawTagCloud = function(htmlElementSelector, dim, callback)
                     else
                         tag.style.backgroundColor = 'white'
                     var weight = viewModel.density[dim][tagName]
-                    tag.style.fontSize = 0.01 + (1.3 * weight) + 'em'
+                    tag.style.fontSize = 0.3 + (1 * weight) + 'em'
                 }
             }
         return tag

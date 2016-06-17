@@ -37,12 +37,11 @@ irgendwie ein gemeinsames interface finden.
 ##Graph api, alias definiere achsen, alias assoziationen:
 das graph api besteht aus einem set von assoziationen.
 es muss mindestens eine assoziation geben (x) sonst sieht man gar nix, die anderen sind optional.
-je mehr assoziationen desto mehr achsen bzw. eigenschaften wie farbe kann man im graph sehen. 1D bis 3D plus farbe...
-man kann assoziationen für folgende 'achsen' machen: x, y, z, gruppe, radius, color                 (achse is a blödes wort, weil farbe gruppe radius auch dabei ist (vll 'visible'?))
-anmerkung: color kann man auch als assoziation implementieren,
-           wird derzeit aber automatisch von plotly über die gruppe gemacht
+je mehr assoziationen desto mehr visible bzw. eigenschaften wie farbe kann man im graph sehen. 1D bis 3D plus farbe...
+man kann assoziationen für folgende 'visible' machen: x, y, z, gruppe, radius, color                 (achse is a blödes wort, weil farbe gruppe radius auch dabei ist (vll 'visible'?))
 
-1. eine assoziation definiert was man auf der 'achse' sieht                                         ('visible' statt 'achse'?)
+
+1. eine assoziation definiert was das 'visible' darstellt                                         ('visible' statt 'achse'?)
    (bzw. nicht nur auf der achse, sonden auch anderen eigenschaften der des graphen,
     wie z.b. 'welche punkte bilden eine linie' oder was hat die gleiche farbe)
 
@@ -52,7 +51,10 @@ anmerkung: color kann man auch als assoziation implementieren,
                                              ↓
         (x | y | z | group | radius | color) : const
                                              | featureKey | countryKey | yearKey
-                                             | data[featureKey|const][countryKey|const][yearKey|const]
+                                             | data[featureSelection|const][countrySelection|const][yearSelection|const]
+
+        x: countrySelection
+
         // const steht hier für konstante zahl oder string.
         // hier sei angemerkt, das die alle ausdrücke rechts immer ein string, number, oder Date sein müssen,
         // weil plotly nur diese typen akzeptiert.
@@ -100,6 +102,14 @@ anmerkung: color kann man auch als assoziation implementieren,
 wird dann gebraucht wenn ein ...Key verwendet wird, und definiert welche werte ...Key annimmt.
 verwendet man den ...Key NICHT aber es gibt eine selection kann es zu problemen kommen (mein problem?)
 
+## eine (wage) theorie wie wann die achsen labels berechnen kann
+je nach assoziations form wird das label unterschiedlich berechnet:
+wenn form:
+3.2   --> achenlabel der linken seite = rechte seite ohne 'Key', und falls featureKey ist es dessen wert
+3.3.2 --> achenlabel der linken seite = 'existiert'
+3.3.3 --> achsenlabel der linken seite = das in der [] des verwendeten feature index
+
+
 ## die formen unserer derzeitigen examples:
 - typische graphen verwenden eine assoziatin der form (3.3) und der rest ist die form (3.2).
   also einmal (3.3) für einen zahlen wert aus der db.
@@ -127,8 +137,10 @@ im folgenden js code ist:
 es ist nicht gesagt das defView der einzige sinnvolle graph typ ist,
 es können mehrere sein. defView definiert nur welcher als default angezeigt wird.
 
+note: wird undefined als selection verwendet bedeutet dies ALLE (features, länder, jahre) sind ausgewählt
+
 ```javascript
-{   // zeigt was alles da ist (innerhalb der selection) (3D)
+{   // zeigt für welche indizes werte vorhanden sind (innerhalb der selection) (3D)
     script: 'x:featureKey, y:countryKey, z:yearKey, group:countryKey',
     selection: {
         features:  undefined,
@@ -138,21 +150,24 @@ es können mehrere sein. defView definiert nur welcher als default angezeigt wir
     defView: '3D Scatter'
 },
 {
-    // zeigt die ausgewähltn features der ausgewählten lander über der zeit
-    script: "x:yearKey, y:viewModel.data[featureKey][countryKey][yearKey], group:countryKey + '-' + featureKey",
+    // zeigt für welche indizes werte vorhanden sind (innerhalb der selection)
+    // (2D) has heißt man sieht nicht in welchem jahr der wert da ist sondern nur OB
+    // (z hat ja immer den gleichen wert, und wird deshalb immer an die selbe stelle gezeichnet)
+    // selektiert man ein jahr erledigt sich das problem (eine dimension weniger und der 2d graph passt)
+    script: "x:yearKey, y:featureKey, z:yearKey, group:featureKey",
     selection: {
-        features:  { 'Arms_imports[$]':true, 'Arms_exports[$]':true },
+        features:  undefined,
         countries: { 'United States':true, 'China':true, 'Saudi Arabia':true },
         years:     undefined
     },
     defView: '2D'
 },
 {
-    // zeigt was alles da ist (innerhalb der selection)
-    // (2D) has heißt man sieht nicht in welchem jahr der wert da ist (z hat ja immer den gleichen wert, und wir deshalb immer an die selbe stelle gezeichnet)
-    script: "x:yearKey, y:featureKey, z:yearKey, group:featureKey",
+    // zeigt die ausgewähltn features der ausgewählten lander über der zeit,
+    // grupperit nach feature und land
+    script: "x:yearKey, y:viewModel.data[featureKey][countryKey][yearKey], group:countryKey + '-' + featureKey",
     selection: {
-        features:  undefined,
+        features:  { 'Arms_imports[$]':true, 'Arms_exports[$]':true },
         countries: { 'United States':true, 'China':true, 'Saudi Arabia':true },
         years:     undefined
     },

@@ -16,14 +16,14 @@ var createViewBase = function(type, className, onUpdate)
 var createPlotlyBase = function(draw)
 {
     var d3 = Plotly.d3;
-    var WIDTH_IN_PERCENT_OF_PARENT = 90, HEIGHT_IN_PERCENT_OF_PARENT = 65;
+    var WIDTH_IN_PERCENT_OF_PARENT = 100, HEIGHT_IN_PERCENT_OF_PARENT = 90;
     var gd3 = d3.select('body')
         .append('div')
         .style({
             width: WIDTH_IN_PERCENT_OF_PARENT + '%',
             marginLeft: (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
             height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
-            marginTop: '2em'
+            marginTop: '0em'
         })
 
     var view = gd3.node()
@@ -34,33 +34,71 @@ var createPlotlyBase = function(draw)
     return view
 }
 
+var updatePlotly = function(loayout, onNewTrace, onValue)
+{
+    var traces = {}
+    var dim1 = viewModel.selection.features  || viewModel.keys.features
+    var dim2 = viewModel.selection.countries || viewModel.keys.countries
+    var dim3 = viewModel.selection.years     || viewModel.keys.years
+    for (var featureKey in dim1) if (viewModel.data[featureKey]) {
+        for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
+            for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
+
+                var item = eval('({' + $('#query').val() + '})')
+                if (!traces[item.group])
+                    traces[item.group] = onNewTrace(item)
+
+                onValue(item)
+            }
+        }
+    }
+
+    Plotly.newPlot(view, objValues2Array(traces), { barmode: 'overlay', title:/*toString(viewModel.selection.features)*/"" })
+}
+
 var createPlotly1dGraph = function()
 {
     return createPlotlyBase(view=>
     {
-        var x = []
+        /*updatePlotly({
+            barmode: 'overlay', title:":(" },
+            ['x'],
+            i=> {
+                x:[],
+                type:'histogram',
+                bins:20,
+                marker: { line: { width:1 } },
+                name:item.group,
+                opacity: 0.6
+            },
+            i=>
+        )*/
+
+        var traces = {}
         var dim1 = viewModel.selection.features  || viewModel.keys.features
         var dim2 = viewModel.selection.countries || viewModel.keys.countries
         var dim3 = viewModel.selection.years     || viewModel.keys.years
         for (var featureKey in dim1) if (viewModel.data[featureKey]) {
             for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
                 for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
-                    //var item = eval('({' + $('#query').val() + '})')
 
-                    console.assert(viewModel.data[featureKey][countryKey][yearKey])
-                    console.assert(typeof(viewModel.data[featureKey][countryKey][yearKey]) === 'number')
-                    x.push(viewModel.data[featureKey][countryKey][yearKey])
+                    var item = eval('({' + $('#query').val() + '})')
+                    if (!traces[item.group])
+                        traces[item.group] = {
+                            x:[],
+                            type:'histogram',
+                            bins:20,
+                            marker: { line: { width:1 } },
+                            name:item.group,
+                            opacity: 0.6
+                        }
+
+                    traces[item.group].x.push(item.x)
                 }
             }
         }
 
-        var data = {
-            x:x,
-            type:'histogram',
-            bins:20,
-            marker: { line: { width:1 } }
-        }
-        Plotly.newPlot(view, [data], { title:toString(viewModel.selection.features) })
+        Plotly.newPlot(view, objValues2Array(traces), { barmode: 'overlay', title:/*toString(viewModel.selection.features)*/":(" })
     })
 }
 
@@ -69,41 +107,33 @@ var createPlotlyBarGraph = function(draw){
 
     return createPlotlyBase(view=>
     {
-        var countries_array = [];
-        var values_array = [];
-        var feature = Object.keys(viewModel.selection.features)[0]
-        var year = '2000'
+        var traces = {}
+        var dim1 = viewModel.selection.features  || viewModel.keys.features
+        var dim2 = viewModel.selection.countries || viewModel.keys.countries
+        var dim3 = viewModel.selection.years     || viewModel.keys.years
+        for (var featureKey in dim1) if (viewModel.data[featureKey]) {
+            for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
+                for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
 
-        //var dim1 = viewModel.selection.features
-        var dim2 = viewModel.selection.countries
-        //var dim3 = viewModel.selection.years
-        //for (var featureKey in dim1) if (viewModel.data[featureKey]) {
-        for (var countryKey in dim2){
-            if (viewModel.data[feature]) {
-                if (viewModel.data[feature][countryKey]) {
-                    if (viewModel.data[feature][countryKey][year]) {
-                        countries_array.push(countryKey);
-                        values_array.push(viewModel.data[feature][countryKey][year]);
-                    }
+                    var item = eval('({' + $('#query').val() + '})')
+                    if (!traces[item.group])
+                        traces[item.group] = {
+                            x:[],
+                            y:[],
+                            type:'bar',
+                            name:item.group,
+                            line: { shape: 'spline' },
+                            marker: { opacity: 0.6, },
+                            opacity: 0.6
+                        }
+
+                    traces[item.group].x.push(item.x)
+                    traces[item.group].y.push(item.y)
                 }
             }
         }
 
-        console.log(values_array);
-        Plotly.newPlot(view,
-            [{
-                type: 'bar',
-                x: countries_array,
-                y: values_array,
-                marker: {
-                    color: 'green',
-                    line: {
-                        width:1
-                    }
-                }
-            }],
-            { title: feature }
-        )
+        Plotly.newPlot(view, objValues2Array(traces), {barmode: 'stack'})
     })
 }
 
@@ -111,6 +141,30 @@ var createPlotlyMapGraph = function()
 {
     return createPlotlyBase(view=>
     {
+        var traces = {}
+        var dim1 = viewModel.selection.features  || viewModel.keys.features
+        var dim2 = viewModel.selection.countries || viewModel.keys.countries
+        var dim3 = viewModel.selection.years     || viewModel.keys.years
+        for (var featureKey in dim1) if (viewModel.data[featureKey]) {
+            for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
+                for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
+
+                    var item = eval('({' + $('#query').val() + '})')
+                    if (!traces[countryKey])
+                        traces[countryKey] = item.x
+                }
+            }
+        }
+
+        var data = [{
+            type:'choropleth',
+            locationmode:'country names',
+            locations:Object.keys(traces),
+            z:objValues2Array(traces),
+            autocolorscale:true
+        }]
+
+        Plotly.newPlot(view, data, { geo: { projection: { type: 'robinson' }}})
     })
 }
 
@@ -125,8 +179,8 @@ var createPlotly2dGraph = function()
         for (var featureKey in dim1) if (viewModel.data[featureKey]) {
             for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
                 for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
-                    var item = eval('({' + $('#query').val() + '})')
 
+                    var item = eval('({' + $('#query').val() + '})')
                     if (!traces[item.group])
                         traces[item.group] = {
                             x:[],
@@ -145,11 +199,7 @@ var createPlotly2dGraph = function()
             }
         }
 
-        var tracesArray = []
-        for (var lineName in traces)
-            tracesArray.push(traces[lineName])
-
-        Plotly.newPlot(view, tracesArray)
+        Plotly.newPlot(view, objValues2Array(traces))
     })
 }
 
@@ -164,6 +214,49 @@ var createPlotlyBubbleGraph = function()
 {
     return createPlotlyBase(view=>
     {
+        var traces = {}
+        var dim1 = viewModel.selection.features  || viewModel.keys.features
+        var dim2 = viewModel.selection.countries || viewModel.keys.countries
+        var dim3 = viewModel.selection.years     || viewModel.keys.years
+        for (var featureKey in dim1)    if (viewModel.data[featureKey]) {
+            for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
+                for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
+                    try
+                    {
+                        var item = eval('({' + $('#query').val() + '})')
+                        if (!traces[item.group])
+                            traces[item.group] = {
+                                x:[],
+                                y:[],
+                                type:'scatter',
+                                mode: 'markers',
+                                opacity: 0.5,
+                                name:item.group,
+                                marker: { size:[], sizemode: 'area' }
+                            }
+
+                        traces[item.group].x.push(item.x)
+                        traces[item.group].y.push(item.y)
+                        traces[item.group].marker.size.push(item.r)
+                    }
+                    catch(e) { console.log('scatterplot warning') }
+                }
+            }
+        }
+
+        var layout = {
+            hovermode:'closest',
+            xaxis: {
+                type: 'log',
+                autorange: true
+            },
+            yaxis: {
+                type: 'log',
+                autorange: true
+            }
+        }
+
+        Plotly.newPlot(view, objValues2Array(traces), layout)
     })
 }
 
@@ -178,32 +271,44 @@ var createPlotly2dScatterGraph = function()
         for (var featureKey in dim1)    if (viewModel.data[featureKey]) {
             for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
                 for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
+                    try
+                    {
+                        var item = eval('({' + $('#query').val() + '})')
+                        if (!traces[item.group])
+                            traces[item.group] = {
+                                x:[],
+                                y:[],
+                                type:'scatter',
+                                mode: 'markers',
+                                opacity: 0.5,
+                                name:item.group,
+                            }
 
-                    if (!traces[countryKey])
-                        traces[countryKey] = {
-                            x:[],
-                            y:[],
-                            type:'scatter',
-                            mode: 'markers',
-                            opacity: 0.5,
-                            name:countryKey,
-                            text:countryKey + ' - ' + yearKey,
-                            //marker: { line: { width:1 } }
-                        }
-
-                    traces[countryKey].x.push(viewModel.data['Arms imports'][countryKey][yearKey])
-                    traces[countryKey].y.push(viewModel.data['Arms exports'][countryKey][yearKey])
+                        traces[item.group].x.push(item.x)
+                        traces[item.group].y.push(item.y)
+                    }
+                    catch(e) { console.log('scatterplot warning') }
                 }
             }
         }
 
-        var tracesArray = []
-        for (var lineName in traces)
-            tracesArray.push(traces[lineName])
+        var layout = {
+            hovermode:'closest',
+            xaxis: {
+                type: 'log',
+                autorange: true
+            },
+            yaxis: {
+                type: 'log',
+                autorange: true
+            }
+        }
 
-        Plotly.newPlot(view, tracesArray)
+        Plotly.newPlot(view, objValues2Array(traces), layout)
     })
 }
+
+// legend: {"orientation": "h"}
 
 var createVis2dGraph = function()
 {
@@ -277,10 +382,6 @@ var createPlotly3dScatterGraph = function()
             }
         }
 
-        var tracesArray = []
-        for (var lineName in traces)
-            tracesArray.push(traces[lineName])
-
-        Plotly.newPlot(view, tracesArray)
+        Plotly.newPlot(view, objValues2Array(traces))
     })
 }
