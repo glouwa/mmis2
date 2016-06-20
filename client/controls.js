@@ -63,13 +63,14 @@ var tabControl = function(tabs)
         console.log(name)
         if (viewModel.currentGraph)
             viewModel.currentGraph.deactivate()
+            console.trace('++++', name)
         viewModel.currentGraph = tabs[name]()
         view.innerHTML = ''
         view.appendChild(viewModel.currentGraph)
         //console.log(viewModel.currentGraph)
     }
 
-    view.setGraph('1D')
+    view.setGraph('1D Hist')
 
     for (let name in tabs) {
         var li = document.createElement('li')

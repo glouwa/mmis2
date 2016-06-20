@@ -91,14 +91,14 @@ var onLoad = function()
 {
     // setup tabcontrole by adding graph factorys
     viewModel.tabControl = tabControl({
-        'Map':createPlotlyMapGraph,
-        'Bar':createPlotlyBarGraph,
-        '1D':createPlotly1dGraph,
-        '2D':createPlotly2dGraph,
+        '1D Hist':createPlotly1dGraph,
         '2D Scatter':createPlotly2dScatterGraph,
-        '2D Bubble':createPlotlyBubbleGraph,
-        '3D':createPlotly3dGraph,
+        '2D+ Line':createPlotly2dGraph,
+        '2D+ Bar':createPlotlyBarGraph,
+        '2D+ Map':createPlotlyMapGraph,
+        '2D+ Bubble':createPlotlyBubbleGraph,
         '3D Scatter':createPlotly3dScatterGraph,
+        '3D+ Ribbon':createPlotly3dGraph,
         'Vis 2D':createVis2dGraph,
         //'Vis 3D':createVis2dGraph,
     })
@@ -159,8 +159,13 @@ var onLoad = function()
 
 var setYear = function(year)
 {
-    if (!year)
+    if (!year){
         $('#selectedYear').text('')
+        $('.time > span')[0].style.backgroundColor = str2Color('All', 0.4)
+    }
+    else{
+        $('.time > span')[0].style.backgroundColor = 'white'
+    }
     viewModel.selection.years = year
     updateView()
 }
@@ -191,7 +196,7 @@ var projects = [
             countries: undefined,
             years:     { '2010':true }
         },
-        defView: '1D'
+        defView: '1D Hist'
     },
     {
         script: "x:yearKey, y:viewModel.data[featureKey][countryKey][yearKey], group:countryKey + '-' + featureKey",
@@ -200,7 +205,7 @@ var projects = [
             countries: { 'United States':true, 'China':true, 'Saudi Arabia':true },
             years:     undefined
         },
-        defView: '2D'
+        defView: '2D+ Line'
     },
     {
         script: "x:viewModel.data['Country_GDP[$]'][countryKey][yearKey], y:viewModel.data['Suicides[#]'][countryKey][yearKey], group:countryKey, r:viewModel.data['Urbanpopulation[%]'][countryKey][yearKey]",
@@ -218,7 +223,7 @@ var projects = [
             countries: { 'United States':true, 'China':true, 'Saudi Arabia':true },
             years:     undefined
         },
-        defView: '2D'
+        defView: '2D+ Line'
     },
     {
         script: 'x:featureKey, y:countryKey, z:yearKey, group:countryKey',
@@ -236,6 +241,24 @@ var projects = [
             countries: undefined,
             years:     undefined
         },
-        defView: 'Bar'
+        defView: '2D+ Bar'
+    },
+    {
+        script: 'x:countryKey, y:viewModel.data[featureKey][countryKey][yearKey], group:featureKey',
+        selection: {
+            features:  { 'Arms_imports[$]':true },
+            countries: undefined,
+            years:     undefined
+        },
+        defView: '2D+ Map'
+    },
+    {
+        script: 'x:yearKey, y:viewModel.data[featureKey][countryKey][yearKey], group:countryKey',
+        selection: {
+            features:  { 'Arms_exports[$]':true },
+            countries: { 'United States':true, 'Russia':true },
+            years:     undefined
+        },
+        defView: '2D+ Line'
     },
 ]

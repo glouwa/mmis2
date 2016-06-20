@@ -34,6 +34,7 @@ var createPlotlyBase = function(draw)
     return view
 }
 
+/*
 var updatePlotly = function(loayout, onNewTrace, onValue)
 {
     var traces = {}
@@ -53,8 +54,8 @@ var updatePlotly = function(loayout, onNewTrace, onValue)
         }
     }
 
-    Plotly.newPlot(view, objValues2Array(traces), { barmode: 'overlay', title:/*toString(viewModel.selection.features)*/"" })
-}
+    Plotly.newPlot(view, objValues2Array(traces), { barmode: 'overlay' })
+}*/
 
 var createPlotly1dGraph = function()
 {
@@ -73,6 +74,7 @@ var createPlotly1dGraph = function()
             },
             i=>
         )*/
+        var asso = $('#query').val()
 
         var traces = {}
         var dim1 = viewModel.selection.features  || viewModel.keys.features
@@ -82,7 +84,7 @@ var createPlotly1dGraph = function()
             for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
                 for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
 
-                    var item = eval('({' + $('#query').val() + '})')
+                    var item = eval('({' + asso + '})')
                     if (!traces[item.group])
                         traces[item.group] = {
                             x:[],
@@ -98,7 +100,7 @@ var createPlotly1dGraph = function()
             }
         }
 
-        Plotly.newPlot(view, objValues2Array(traces), { barmode: 'overlay', title:/*toString(viewModel.selection.features)*/":(" })
+        Plotly.newPlot(view, objValues2Array(traces), { barmode: 'stack', title:/*toString(viewModel.selection.features)*/"" })
     })
 }
 
@@ -107,6 +109,8 @@ var createPlotlyBarGraph = function(draw){
 
     return createPlotlyBase(view=>
     {
+        var asso = $('#query').val()
+
         var traces = {}
         var dim1 = viewModel.selection.features  || viewModel.keys.features
         var dim2 = viewModel.selection.countries || viewModel.keys.countries
@@ -115,7 +119,7 @@ var createPlotlyBarGraph = function(draw){
             for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
                 for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
 
-                    var item = eval('({' + $('#query').val() + '})')
+                    var item = eval('({' + asso + '})')
                     if (!traces[item.group])
                         traces[item.group] = {
                             x:[],
@@ -141,6 +145,8 @@ var createPlotlyMapGraph = function()
 {
     return createPlotlyBase(view=>
     {
+        var asso = $('#query').val()
+
         var traces = {}
         var dim1 = viewModel.selection.features  || viewModel.keys.features
         var dim2 = viewModel.selection.countries || viewModel.keys.countries
@@ -148,10 +154,12 @@ var createPlotlyMapGraph = function()
         for (var featureKey in dim1) if (viewModel.data[featureKey]) {
             for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
                 for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
-
-                    var item = eval('({' + $('#query').val() + '})')
-                    if (!traces[countryKey])
-                        traces[countryKey] = item.x
+                    try {
+                        var item = eval('({' + asso + '})')
+                        if (!traces[item.x])
+                            traces[item.x] = item.y
+                        }
+                    catch(e) {}
                 }
             }
         }
@@ -172,6 +180,8 @@ var createPlotly2dGraph = function()
 {
     return createPlotlyBase(view=>
     {
+        var asso = $('#query').val()
+
         var traces = {}
         var dim1 = viewModel.selection.features  || viewModel.keys.features
         var dim2 = viewModel.selection.countries || viewModel.keys.countries
@@ -180,7 +190,7 @@ var createPlotly2dGraph = function()
             for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
                 for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
 
-                    var item = eval('({' + $('#query').val() + '})')
+                    var item = eval('({' + asso + '})')
                     if (!traces[item.group])
                         traces[item.group] = {
                             x:[],
@@ -199,7 +209,7 @@ var createPlotly2dGraph = function()
             }
         }
 
-        Plotly.newPlot(view, objValues2Array(traces))
+        Plotly.newPlot(view, objValues2Array(traces), { hovermode:'closest' })
     })
 }
 
@@ -207,6 +217,7 @@ var createPlotly3dGraph = function()
 {
     return createPlotlyBase(view=>
     {
+        var asso = $('#query').val()
     })
 }
 
@@ -214,6 +225,8 @@ var createPlotlyBubbleGraph = function()
 {
     return createPlotlyBase(view=>
     {
+        var asso = $('#query').val()
+
         var traces = {}
         var dim1 = viewModel.selection.features  || viewModel.keys.features
         var dim2 = viewModel.selection.countries || viewModel.keys.countries
@@ -223,7 +236,7 @@ var createPlotlyBubbleGraph = function()
                 for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
                     try
                     {
-                        var item = eval('({' + $('#query').val() + '})')
+                        var item = eval('({' + asso + '})')
                         if (!traces[item.group])
                             traces[item.group] = {
                                 x:[],
@@ -264,6 +277,8 @@ var createPlotly2dScatterGraph = function()
 {
     return createPlotlyBase(view=>
     {
+        var asso = $('#query').val()
+
         var traces = {}
         var dim1 = viewModel.selection.features  || viewModel.keys.features
         var dim2 = viewModel.selection.countries || viewModel.keys.countries
@@ -273,7 +288,7 @@ var createPlotly2dScatterGraph = function()
                 for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
                     try
                     {
-                        var item = eval('({' + $('#query').val() + '})')
+                        var item = eval('({' + asso + '})')
                         if (!traces[item.group])
                             traces[item.group] = {
                                 x:[],
@@ -314,7 +329,8 @@ var createVis2dGraph = function()
 {
     var view = createViewBase('div', 'graphView', ()=> {
         var items = []
-        var groups = []
+        var groups = {}
+        var g =1
 
         var dim1 = viewModel.selection.features  || viewModel.keys.features
         var dim2 = viewModel.selection.countries || viewModel.keys.countries
@@ -322,21 +338,38 @@ var createVis2dGraph = function()
         for (var featureKey in dim1) if (viewModel.data[featureKey]) {
             for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
                 for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
-                    var countryColor = str2Color(countryKey)
-                    var featureColor = /*countryColor*/ str2Color(featureKey)
-                    var strokeColor = 'white'
-                    var groupOptions = { drawPoints: { size:8, style:'circle', styles:'stroke:'+strokeColor+';fill:'+featureColor+';' } }
-                    var item = eval('({' + $('#query').val() + '})')
-                    var group = { id:item.group, content:item.group, style:'stroke:'+countryColor+';', options:groupOptions }
-                    groups.push(group)
-                    items.push(item)
+                    try
+                    {
+                        var item = eval('({' + $('#query').val() + '})')
+
+                        if (!groups[item.group]) {
+                            var countryColor = str2Color(countryKey)
+                            var featureColor = /*countryColor*/ str2Color(featureKey)
+                            var strokeColor = 'white'
+                            var groupOptions = { drawPoints: { size:8, style:'circle', styles:'stroke:'+strokeColor+';fill:'+featureColor+';' } }
+                            //var group = { id:item.group, content:item.group, style:'stroke:'+countryColor+';', options:groupOptions }
+                            var group = { id:''+g++, content:item.group, style:'stroke:'+countryColor+';', options:groupOptions }
+                            groups[item.group] = group
+                        }
+
+                        var i = { x:Number(item.x), y:item.y,  group:groups[item.group].id }
+                        items.push(i)
+
+                        console.assert(typeof(i.x) == 'number' && !isNaN(i.x) &&
+                                       typeof(i.y) == 'number' &&  !isNaN(i.y) &&
+                                       groups[item.group])
+                    }
+                    catch(e) {}
                 }
             }
         }
 
+        console.log(objValues2Array(groups))
+        console.log(items)
+
         groupset.clear()
         dataset.clear()
-        groupset.update(groups)
+        groupset.update(objValues2Array(groups))
         dataset.update(items)
         visDing.fit()
     })
@@ -352,6 +385,8 @@ var createPlotly3dScatterGraph = function()
 {
     return createPlotlyBase(view=>
     {
+        var asso = $('#query').val()
+
         var traces = {}
         var dim1 = viewModel.selection.features  || viewModel.keys.features
         var dim2 = viewModel.selection.countries || viewModel.keys.countries
@@ -360,8 +395,8 @@ var createPlotly3dScatterGraph = function()
             for (var countryKey in dim2) if (viewModel.data[featureKey][countryKey]) {
                 for (var yearKey in dim3) if (viewModel.data[featureKey][countryKey][yearKey]) {
 
-                    var script = eval('({' + $('#query').val() + '})')
-                    var group = script.group
+                    var item = eval('({' + $('#query').val() + '})')
+                    var group = item.group
 
                     if (!traces[group])
                         traces[group] = {
@@ -375,9 +410,9 @@ var createPlotly3dScatterGraph = function()
                             opacity: 0.4
                         }
 
-                    traces[group].x.push(script.x)
-                    traces[group].y.push(script.y)
-                    traces[group].z.push(script.z)
+                    traces[group].x.push(item.x)
+                    traces[group].y.push(item.y)
+                    traces[group].z.push(item.z)
                 }
             }
         }
